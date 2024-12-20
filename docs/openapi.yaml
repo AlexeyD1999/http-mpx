@@ -1,0 +1,77 @@
+openapi: 3.0.1
+info:
+  title: Multiplexer API
+  description: API multiplexer
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+    description: Local environment
+
+paths:
+  /send:
+    post:
+      summary: Send input URLs
+      description: Method to send URLs
+      operationId: Send
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/SendResponseData"
+        '429':
+          description: Too many requests
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    SendRequest:
+      type: object
+      required:
+        - urls
+      properties:
+        urls:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 20
+          description: list of URLs
+
+    SendResponseData:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SendResponse"
+
+    SendResponse:
+      type: object
+      required:
+        - url
+        - userId
+        - id
+        - title
+        - completed
+      properties:
+        url:
+          type: string
+        userId:
+          type: integer
+        id:
+          type: integer
+        title:
+          type: string
+        completed:
+          type: boolean
